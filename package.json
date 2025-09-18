@@ -1,0 +1,20 @@
+{
+  "name": "genboil",
+  "version": "1.0.0",
+  "description": "A modular task runner in Node.js",
+  "homepage": "https://github.com/ShaiGerbi/GenBoil#readme",
+  "bugs": {
+    "url": "https://github.com/ShaiGerbi/GenBoil/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShaiGerbi/GenBoil.git"
+  },
+  "license": "MIT",
+  "author": "Shai Gerbi",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  }
+}
