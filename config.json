@@ -1,0 +1,16 @@
+{
+  "project": {
+    "name": "MyApp",
+    "description": "Example project created for demonstration purposes",
+    "basePath": "C:/Projects/MyApp",
+    "version": "1.0.0",
+    "author": "Shai Gerbi"
+  },
+  "settings": {
+    "logLevel": "info",
+    "logFile": "./logs/genboil.log"
+  },
+  "tasks": [
+
+  ]
+}
