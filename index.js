@@ -77,14 +77,17 @@ function resolveParams(data, config) {
  * @returns {Array} An array of task objects to be executed.
  */
 function selectTasksToRun() {
+  const enabledTasks = config.tasks.filter(task => task.enabled !== false);
+
   if (argv.tasks) {
     const selectedTaskIds = argv.tasks.split(',').map(t => t.trim());
-    const selectedTasks = config.tasks.filter(task => selectedTaskIds.includes(task.id));
+    const selectedTasks = enabledTasks.filter(task => selectedTaskIds.includes(task.id));
     logger.info(`Running selected tasks: ${selectedTasks.map(t => t.id).join(', ')}`);
     return selectedTasks;
   }
-  logger.info(`Running all tasks in order: ${config.tasks.map(t => t.id).join(', ')}`);
-  return config.tasks;
+
+  logger.info(`Running all enabled tasks in order: ${enabledTasks.map(t => t.id).join(', ')}`);
+  return enabledTasks;
 }
 
 /**
