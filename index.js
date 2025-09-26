@@ -7,6 +7,7 @@ import prompts from 'prompts';
 import chalk from 'chalk';
 import createLogger from './logger.js';
 import config from './config.json' with { type: 'json' };
+import { handleGitAction } from './git-handler.js';
 
 // Initialize logger with settings from config
 const logger = createLogger(config.settings);
@@ -184,6 +185,17 @@ async function main() {
       if (!success) {
         logger.error("Stopping runner due to a failed task.");
         process.exit(1); // Exit with error
+      }
+
+      // Check if it has a git block.
+      if (resolvedTask.git) {
+        try {
+          await handleGitAction(resolvedTask, config, logger);
+        }
+        catch (error) {
+          logger.error(`Post-task Git operation failed: ${error.message}`);
+          process.exit(1); // Stop the runner if git action fails
+        }
       }
     }
     else {
