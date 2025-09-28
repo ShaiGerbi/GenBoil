@@ -142,8 +142,14 @@ async function executeTask(task) {
       throw new Error('Task module must export an async function named "run".');
     }
 
+    const context = {
+      taskDir: path.dirname(taskPath) // The absolute path to the task's own directory
+    };
+
     taskLogger.info(`Starting task execution... (${description || id})`);
-    await taskModule.run(params, config, taskLogger);
+
+    await taskModule.run(params, config, taskLogger, context);
+
     taskLogger.log('success', "Task completed successfully.");
     return true; // Indicate success
   }
