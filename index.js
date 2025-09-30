@@ -21,7 +21,7 @@ const argv = yargs(hideBin(process.argv))
   .option('tasks', {
     alias: 't',
     type: 'string',
-    description: 'Run specific tasks by ID (comma-separated)',
+    description: 'Run specific tasks by action (comma-separated)',
   })
   .option('yes', {
     alias: 'y',
@@ -38,13 +38,13 @@ function selectTasksToRun() {
   const enabledTasks = config.tasks.filter(task => task.enabled !== false);
 
   if (argv.tasks) {
-    const selectedTaskIds = argv.tasks.split(',').map(t => t.trim());
-    const selectedTasks = enabledTasks.filter(task => selectedTaskIds.includes(task.id));
-    logger.info(`Running selected tasks: ${selectedTasks.map(t => t.id).join(', ')}`);
+    const selectedTaskActions = argv.tasks.split(',').map(t => t.trim());
+    const selectedTasks = enabledTasks.filter(task => selectedTaskActions.includes(task.action));
+    logger.info(`Running selected tasks: ${selectedTasks.map(t => t.action).join(', ')}`);
     return selectedTasks;
   }
 
-  logger.info(`Running all enabled tasks in order: ${enabledTasks.map(t => t.id).join(', ')}`);
+  logger.info(`Running all enabled tasks in order: ${enabledTasks.map(t => t.action).join(', ')}`);
   return enabledTasks;
 }
 
@@ -54,10 +54,10 @@ function selectTasksToRun() {
  * @returns {Promise<boolean>} - True if the user confirms, false if they decline.
  */
 async function runWizard(task) {
-  const { id, description } = task;
+  const { action, description } = task;
   const message = description
-    ? `Run task '${chalk.cyan(id)}' (${description})?`
-    : `Run task '${chalk.cyan(id)}'?`;
+    ? `Run task '${chalk.cyan(action)}' (${description})?`
+    : `Run task '${chalk.cyan(action)}'?`;
 
   const response = await prompts({
     type: 'confirm',
@@ -80,9 +80,9 @@ async function runWizard(task) {
  * @returns {Promise<boolean>} - True on success, false on failure.
  */
 async function executeTask(task) {
-  const { id, description, params } = task;
-  const taskLogger = logger.child({ task: id });
-  const taskPath = path.join(__dirname, 'tasks', id, 'index.js');
+  const { action, description, params } = task;
+  const taskLogger = logger.child({ task: action });
+  const taskPath = path.join(__dirname, 'tasks', action, 'index.js');
 
   try {
     await fs.access(taskPath);
@@ -103,7 +103,7 @@ async function executeTask(task) {
       taskDir: path.dirname(taskPath) // The absolute path to the task's own directory
     };
 
-    taskLogger.info(`Starting task execution... (${description || id})`);
+    taskLogger.info(`Starting task execution... (${description || action})`);
 
     await taskModule.run(params, config, taskLogger, context);
 
@@ -162,7 +162,7 @@ async function main() {
       }
     }
     else {
-      logger.warn(`Skipping task: '${task.id}' as requested by user.`);
+      logger.warn(`Skipping task: '${task.action}' as requested by user.`);
     }
   }
 
