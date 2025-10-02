@@ -29,7 +29,7 @@ async function gitCommit(commitMessageOrBool, task, workingDir, logger) {
 
   if (commitMessageOrBool === true) {
     if (!task.description) {
-      throw new Error("Cannot use 'commit: true' when the task has no description.");
+      throw new Error('Cannot use \'commit: true\' when the task has no description.');
     }
     commitMessage = task.description;
   }
@@ -38,7 +38,9 @@ async function gitCommit(commitMessageOrBool, task, workingDir, logger) {
   const commitCommand = `git commit -m "${sanitizedMessage}"`;
   logger.info(`Executing: ${commitCommand}`);
   const { stdout } = await execAsync(commitCommand, { cwd: workingDir });
-  if (stdout) logger.info(`Commit successful:\n${stdout}`);
+  if (stdout) {
+    logger.info(`Commit successful:\n${stdout}`);
+  }
 }
 
 /**
@@ -50,8 +52,12 @@ async function gitPush(workingDir, logger) {
   const pushCommand = 'git push';
   logger.info(`Executing: ${pushCommand}`);
   const { stdout, stderr } = await execAsync(pushCommand, { cwd: workingDir });
-  if (stdout) logger.info(stdout);
-  if (stderr) logger.info(stderr);
+  if (stdout) {
+    logger.info(stdout);
+  }
+  if (stderr) {
+    logger.info(stderr);
+  }
 }
 
 /**
@@ -63,7 +69,9 @@ async function gitPush(workingDir, logger) {
 export async function handleGitAction(task, globalConfig, logger) {
   // Get the git configuration directly from the task object.
   const gitConfig = task.git;
-  if (!gitConfig) return; // Defensive check, although index.js already checks this.
+  if (!gitConfig) {
+    return; // Defensive check, although index.js already checks this.
+  }
 
   const { add, commit, push } = gitConfig;
   const workingDir = path.resolve(globalConfig.project.basePath);
@@ -86,7 +94,7 @@ export async function handleGitAction(task, globalConfig, logger) {
     logger.error('A Git command failed:');
     logger.error(`STDOUT: ${error.stdout || 'N/A'}`);
     logger.error(`STDERR: ${error.stderr || 'N/A'}`);
-    throw new Error(`Git operation failed. See logs for details.`);
+    throw new Error('Git operation failed. See logs for details.');
   }
 
   gitLogger.log('success', 'Git actions completed successfully.');

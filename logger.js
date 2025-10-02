@@ -47,7 +47,7 @@ function createLogger(settings = {}) {
       warn: 1,
       info: 2,
       success: 3,
-      debug: 4
+      debug: 4,
     },
 
     // Minimum log level applied to all transports
@@ -55,19 +55,19 @@ function createLogger(settings = {}) {
 
     format: winston.format.combine(
       winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-      winston.format.json()
+      winston.format.json(),
     ),
     transports: [
       // File transport
       new winston.transports.File({
         filename: logFile,
-        level: 'debug'
+        level: 'debug',
       }),
       // Console transport
       new winston.transports.Console({
         format: winston.format.combine(
           winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-          consoleFormat
+          consoleFormat,
         ),
       }),
     ],

@@ -8,7 +8,7 @@ import chalk from 'chalk';
 import createLogger from './logger.js';
 import config from './config.json' with { type: 'json' };
 import { handleGitAction } from './git-handler.js';
-import { resolveParams } from "./utils/template-resolver.js";
+import { resolveParams } from './utils/template-resolver.js';
 
 // Initialize logger with settings from config
 const logger = createLogger(config.settings);
@@ -63,7 +63,7 @@ async function runWizard(task) {
     type: 'confirm',
     name: 'value',
     message,
-    initial: true // Default to "Yes"
+    initial: true, // Default to "Yes"
   });
 
   if (typeof response.value === 'undefined') {
@@ -100,18 +100,18 @@ async function executeTask(task) {
     }
 
     const context = {
-      taskDir: path.dirname(taskPath) // The absolute path to the task's own directory
+      taskDir: path.dirname(taskPath), // The absolute path to the task's own directory
     };
 
     taskLogger.info(`Starting task execution... (${description || action})`);
 
     await taskModule.run(params, config, taskLogger, context);
 
-    taskLogger.log('success', "Task completed successfully.");
+    taskLogger.log('success', 'Task completed successfully.');
     return true; // Indicate success
   }
   catch (error) {
-    taskLogger.error("Task failed with an error:");
+    taskLogger.error('Task failed with an error:');
     taskLogger.error(error.stack || error.message);
     return false; // Indicate failure
   }
@@ -126,12 +126,12 @@ async function main() {
   const tasksToRun = selectTasksToRun();
 
   if (tasksToRun.length === 0) {
-    logger.warn("No tasks to run. Exiting.");
+    logger.warn('No tasks to run. Exiting.');
     return;
   }
 
   if (argv.yes) {
-    logger.info("'-y' flag detected. Running in non-interactive mode.");
+    logger.info('\'-y\' flag detected. Running in non-interactive mode.');
   }
 
   for (const task of tasksToRun) {
@@ -146,7 +146,7 @@ async function main() {
 
       // If a task fails, stop the entire process.
       if (!success) {
-        logger.error("Stopping runner due to a failed task.");
+        logger.error('Stopping runner due to a failed task.');
         process.exit(1); // Exit with error
       }
 
@@ -166,7 +166,7 @@ async function main() {
     }
   }
 
-  logger.info("Task runner finished.");
+  logger.info('Task runner finished.');
 }
 
 // Start the application
