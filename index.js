@@ -75,12 +75,14 @@ async function runWizard(task) {
 }
 
 /**
- * Executes a single task, including loading its module and handling errors.
+ * Loads and runs a single task module.
+ * This function now trusts the task's wrapper to handle its own logging and error details.
+ * Its main job is to orchestrate the call and report back a simple success/failure status.
  * @param {object} task - The task object to execute (with resolved params).
  * @returns {Promise<boolean>} - True on success, false on failure.
  */
 async function executeTask(task) {
-  const { action, description, params } = task;
+  const { action, params } = task;
   const taskLogger = logger.child({ task: action });
   const taskPath = path.join(__dirname, 'tasks', action, 'index.js');
 
@@ -103,22 +105,19 @@ async function executeTask(task) {
       taskDir: path.dirname(taskPath), // The absolute path to the task's own directory
     };
 
-    taskLogger.info(`Starting task execution... (${description || action})`);
-
+    // Simply call the wrapped 'run' function.
+    // It will handle its own start/success/error logs internally.
     await taskModule.run(params, config, taskLogger, context);
 
-    taskLogger.log('success', 'Task completed successfully.');
-    return true; // Indicate success
+    return true; // If we got here without an error, it succeeded.
   }
   catch (error) {
-    taskLogger.error('Task failed with an error:');
-    taskLogger.error(error.stack || error.message);
     return false; // Indicate failure
   }
 }
 
 /**
- * Main function that orchestrates the task running process.
+ * Main function that orchestrates the entire task running process.
  */
 async function main() {
   logger.info(`Starting Task Runner for project: "${config.project.name}"`);
